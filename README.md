@@ -7,3 +7,9 @@ To try the module out you may clone the repo and run the ldaptest.rb script
 Requirements:
 * Ruby at least 2.0.0
 * Time to try it out
+
+
+## Requires the net-ldap be installed. To install the net-ldap gem
+```
+gem install net-ldap
+```
