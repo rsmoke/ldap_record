@@ -61,7 +61,9 @@ class Ldaptest
     when 9 then puts "you chose exit!"
       throw(:done)
     else
+      print "\e[2J\e[f"
       puts "====> Please type 0,1,2,3,4,5,6 or 9 only"
+      2.times { puts " " }
     end
   end
 
