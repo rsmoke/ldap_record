@@ -78,7 +78,10 @@ module Ldaptable
       get_ldap_response(ldap)
   end
   # ---------------------------------------------------------------------------------------------------------------------
-  # Get the Name email and members of an LDAP group
+  # Check if the UID is a member of an LDAP group. This function returns TRUE
+  # if uid passed in is a member of group_name passed in. Otherwise it will 
+  # return false.
+
   def Ldaptable.is_member_of_group(uid = nil, group_name = nil)
     ldap = Net::LDAP.new  host: "ldap.umich.edu", # your LDAP host name or IP goes here,
       port:"389", # your LDAP host port goes here,
@@ -100,11 +103,11 @@ module Ldaptable
       ldap.search(filter: composite_filter, attributes: result_attrs) do |item| 
         item.member.each do |entry| 
           if entry.split(",").first.split("=")[1] == uid
-            return "#{uid} is a member of [#{group_name}]"
+            return TRUE 
           end
         end
       end
-      return "#{uid} is NOT a member of [#{group_name}]"
+      return FALSE
 
       get_ldap_response(ldap)
   end 
