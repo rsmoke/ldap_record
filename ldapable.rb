@@ -1,4 +1,4 @@
-module Ldaptable
+module Ldapable
   # this was developed using guidence from this gist:
   # https://gist.githubusercontent.com/jeffjohnson9046/7012167/raw/86587b9637ddc2ece7a42df774980fa9c0aac9b3/ruby-ldap-sample.rb
 
@@ -48,14 +48,14 @@ module Ldaptable
   ##   Additional details for the get_operation_result method can be found here:
   ##   http://net-ldap.rubyforge.org/Net/LDAP.html#method-i-get_operation_result
   ########################################################################################################################
-  def Ldaptable.get_ldap_response(ldap)
+  def Ldapable.get_ldap_response(ldap)
     msg = "Response Code: #{ ldap.get_operation_result.code }, Message: #{ ldap.get_operation_result.message }"
 
     raise msg unless ldap.get_operation_result.code == 0
   end
 
 
-  def Ldaptable.get_simple_name(uniqname = nil)
+  def Ldapable.get_simple_name(uniqname = nil)
     # GET THE DISPLAY NAME AND E-MAIL ADDRESS FOR A SINGLE USER
     ldap = Net::LDAP.new  host: "ldap.umich.edu", # your LDAP host name or IP goes here,
       port:"389", # your LDAP host port goes here,
@@ -82,7 +82,7 @@ module Ldaptable
   # if uid passed in is a member of group_name passed in. Otherwise it will 
   # return false.
 
-  def Ldaptable.is_member_of_group(uid = nil, group_name = nil)
+  def Ldapable.is_member_of_group(uid = nil, group_name = nil)
     ldap = Net::LDAP.new  host: "ldap.umich.edu", # your LDAP host name or IP goes here,
       port:"389", # your LDAP host port goes here,
       #:encryption => :simple_tls,
@@ -103,7 +103,7 @@ module Ldaptable
       ldap.search(filter: composite_filter, attributes: result_attrs) do |item| 
         item.member.each do |entry| 
           if entry.split(",").first.split("=")[1] == uid
-            return TRUE 
+            return true 
           end
         end
       end
@@ -113,7 +113,7 @@ module Ldaptable
   end 
   # ---------------------------------------------------------------------------------------------------------------------
   # Get the Name email and members of an LDAP group
-  def Ldaptable.get_email_distribution_list(group_name = nil)
+  def Ldapable.get_email_distribution_list(group_name = nil)
     ldap = Net::LDAP.new  host: "ldap.umich.edu", # your LDAP host name or IP goes here,
       port:"389", # your LDAP host port goes here,
       #:encryption => :simple_tls,
