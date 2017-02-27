@@ -48,34 +48,37 @@ module Ldapable
   ##   Additional details for the get_operation_result method can be found here:
   ##   http://net-ldap.rubyforge.org/Net/LDAP.html#method-i-get_operation_result
   ########################################################################################################################
-  def Ldapable.get_ldap_response(ldap)
+  def self.get_ldap_response(ldap)
     msg = "Response Code: #{ ldap.get_operation_result.code }, Message: #{ ldap.get_operation_result.message }"
 
     raise msg unless ldap.get_operation_result.code == 0
   end
 
-
-  def Ldapable.get_simple_name(uniqname = nil)
-    # GET THE DISPLAY NAME AND E-MAIL ADDRESS FOR A SINGLE USER
+  def self.ldap_connection
     ldap = Net::LDAP.new  host: "ldap.umich.edu", # your LDAP host name or IP goes here,
       port:"389", # your LDAP host port goes here,
       base: "dc=umich,dc=edu", # the base of your AD tree goes here,
       auth: {
         :method => :anonymous
       }
-      search_param = uniqname # the AD account goes here
-      result_attrs = ["uid", "displayName", "mail", "umichPostalAddressData"] # Whatever you want to bring back in your result set goes here
+  end
 
-      # Build filter
-      search_filter = Net::LDAP::Filter.eq("uid", search_param)
+  def Ldapable.get_simple_name(uniqname = nil)
+    # GET THE DISPLAY NAME AND E-MAIL ADDRESS FOR A SINGLE USER
+    ldap = ldap_connection
+    search_param = uniqname # the AD account goes here
+    result_attrs = ["uid", "displayName", "mail", "umichPostalAddressData"] # Whatever you want to bring back in your result set goes here
 
-      # Execute search
-      ldap.search(filter: search_filter, attributes: result_attrs) { |item|
-        dept_name = item.umichpostaladdressdata.first.split("}:{").first.split("=")[1] unless item.umichpostaladdressdata.first.nil?
-        return "UID: #{item.uid.first}\nDisplay Name: #{item.displayName.first}\nemail: #{item.mail.first}\nDepartment: #{dept_name}"
-      }
+    # Build filter
+    search_filter = Net::LDAP::Filter.eq("uid", search_param)
 
-      get_ldap_response(ldap)
+    # Execute search
+    ldap.search(filter: search_filter, attributes: result_attrs) { |item|
+      dept_name = item.umichpostaladdressdata.first.split("}:{").first.split("=")[1] unless item.umichpostaladdressdata.first.nil?
+      return "UID: #{item.uid.first}\nDisplay Name: #{item.displayName.first}\nemail: #{item.mail.first}\nDepartment: #{dept_name}"
+    }
+
+    get_ldap_response(ldap)
   end
   # ---------------------------------------------------------------------------------------------------------------------
   # Check if the UID is a member of an LDAP group. This function returns TRUE
@@ -83,63 +86,51 @@ module Ldapable
   # return false.
 
   def Ldapable.is_member_of_group(uid = nil, group_name = nil)
-    ldap = Net::LDAP.new  host: "ldap.umich.edu", # your LDAP host name or IP goes here,
-      port:"389", # your LDAP host port goes here,
-      #:encryption => :simple_tls,
-      base: "dc=umich,dc=edu", # the base of your AD tree goes here,
-      auth: {
-        :method => :anonymous
-      }
-      # GET THE MEMBERS OF AN E-MAIL DISTRIBUTION LIST
-      search_param = group_name # the name of the distribution list you're looking for goes here
-      result_attrs = ["member"]
+    ldap = ldap_connection
+    # GET THE MEMBERS OF AN E-MAIL DISTRIBUTION LIST
+    search_param = group_name # the name of the distribution list you're looking for goes here
+    result_attrs = ["member"]
 
-      # Build filter
-      search_filter = Net::LDAP::Filter.eq("cn", search_param)
-      group_filter = Net::LDAP::Filter.eq("objectClass", "group")
-      composite_filter = Net::LDAP::Filter.join(search_filter, group_filter)
+    # Build filter
+    search_filter = Net::LDAP::Filter.eq("cn", search_param)
+    group_filter = Net::LDAP::Filter.eq("objectClass", "group")
+    composite_filter = Net::LDAP::Filter.join(search_filter, group_filter)
 
-      # Execute search, extracting the AD account name from each member of the distribution list
-      ldap.search(filter: composite_filter, attributes: result_attrs) do |item| 
-        item.member.each do |entry| 
-          if entry.split(",").first.split("=")[1] == uid
-            return true 
-          end
+    # Execute search, extracting the AD account name from each member of the distribution list
+    ldap.search(filter: composite_filter, attributes: result_attrs) do |item| 
+      item.member.each do |entry| 
+        if entry.split(",").first.split("=")[1] == uid
+          return true 
         end
       end
-      return FALSE
+    end
+    return FALSE
 
-      get_ldap_response(ldap)
+    get_ldap_response(ldap)
   end 
   # ---------------------------------------------------------------------------------------------------------------------
   # Get the Name email and members of an LDAP group
   def Ldapable.get_email_distribution_list(group_name = nil)
-    ldap = Net::LDAP.new  host: "ldap.umich.edu", # your LDAP host name or IP goes here,
-      port:"389", # your LDAP host port goes here,
-      #:encryption => :simple_tls,
-      base: "dc=umich,dc=edu", # the base of your AD tree goes here,
-      auth: {
-        :method => :anonymous
-      }
-      result_hash = {} 
-      member_hash = {}
-      # GET THE MEMBERS OF AN E-MAIL DISTRIBUTION LIST
-      search_param = group_name # the name of the distribution list you're looking for goes here
-      result_attrs = ["cn", "umichGroupEmail", "member"]
+    ldap = ldap_connection
+    result_hash = {} 
+    member_hash = {}
+    # GET THE MEMBERS OF AN E-MAIL DISTRIBUTION LIST
+    search_param = group_name # the name of the distribution list you're looking for goes here
+    result_attrs = ["cn", "umichGroupEmail", "member"]
 
-      # Build filter
-      search_filter = Net::LDAP::Filter.eq("cn", search_param)
-      group_filter = Net::LDAP::Filter.eq("objectClass", "group")
-      composite_filter = Net::LDAP::Filter.join(search_filter, group_filter)
+    # Build filter
+    search_filter = Net::LDAP::Filter.eq("cn", search_param)
+    group_filter = Net::LDAP::Filter.eq("objectClass", "group")
+    composite_filter = Net::LDAP::Filter.join(search_filter, group_filter)
 
-      # Execute search, extracting the AD account name from each member of the distribution list
-      ldap.search(filter: composite_filter, attributes: result_attrs) do |item| 
-        result_hash["group_name"] = item.cn.first
-        result_hash["group_email"] = item.umichGroupEmail.first
-        result_hash["members"] = item.member
-      end
-      return result_hash
+    # Execute search, extracting the AD account name from each member of the distribution list
+    ldap.search(filter: composite_filter, attributes: result_attrs) do |item| 
+      result_hash["group_name"] = item.cn.first
+      result_hash["group_email"] = item.umichGroupEmail.first
+      result_hash["members"] = item.member
+    end
+    return result_hash
 
-      get_ldap_response(ldap)
+    get_ldap_response(ldap)
   end 
 end
