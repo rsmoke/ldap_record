@@ -46,18 +46,18 @@ class Ldaptest
     puts "2: check current UID and group_uid"
     puts "3: what time is it?"
     puts "4: ldap lookup"
-    puts "5: ldap group-name lookup"
+    puts "5: get ldap group-name member listing"
     puts "6: check if uid is member of a group"
     puts "9: exit"
 
     case gets.chomp.to_i
     when 0 then result_box(reset_uid)
     when 1 then result_box(reset_group_uid)
-    when 2 then result_box("current values:\n UID set to #{@uid}\n group_uid set to #{@group_uid}")
+    when 2 then result_box("current values:\n UID set to=> #{@uid}\n group_uid set to=> #{@group_uid}")
     when 3 then result_box(timestamp)
     when 4 then result_box(Ldapable.get_simple_name(@uid))
     when 5 then result_box(Ldapable.get_email_distribution_list(@group_uid))
-    when 6 then result_box(Ldapable.is_member_of_group(@uid,@group_uid))
+    when 6 then result_box(Ldapable.is_member_of_group?(@uid,@group_uid))
     when 9 then puts "you chose exit!"
       throw(:done)
     else
