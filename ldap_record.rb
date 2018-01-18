@@ -39,20 +39,47 @@ module Ldap_Record
   def Ldap_Record.get_simple_name(uniqname = nil)
     ldap = ldap_connection
     search_param = uniqname # the AD account goes here
-    result_attrs = ["uid", "displayName", "mail", "umichPostalAddressData"] # Whatever you want to bring back in your result set goes here
+    result_attrs = ["displayName"] # Whatever you want to bring back in your result set goes here
     # Build filter
     search_filter = Net::LDAP::Filter.eq("uid", search_param)
     # Execute search
     ldap.search(filter: search_filter, attributes: result_attrs) { |item|
-      dept_name = item.umichpostaladdressdata.first.split("}:{").first.split("=")[1] unless item.umichpostaladdressdata.first.nil?
-      return "UID: #{item.uid.first}\nDisplay Name: #{item.displayName.first}\nemail: #{item.mail.first}\nDepartment: #{dept_name}"
+      return item.displayName.first
+    }
+    get_ldap_response(ldap)
+  end
+
+  # GET THE DISPLAY NAME AND E-MAIL ADDRESS FOR A SINGLE USER
+  def Ldap_Record.get_dept(uniqname = nil)
+    ldap = ldap_connection
+    search_param = uniqname # the AD account goes here
+    result_attrs = ["umichPostalAddressData"] # Whatever you want to bring back in your result set goes here
+    # Build filter
+    search_filter = Net::LDAP::Filter.eq("uid", search_param)
+    # Execute search
+    ldap.search(filter: search_filter, attributes: result_attrs) { |item|
+      return dept_name = item.umichpostaladdressdata.first.split("}:{").first.split("=")[1] unless item.umichpostaladdressdata.first.nil?
+    }
+    get_ldap_response(ldap)
+  end
+
+  # GET THE DISPLAY NAME AND E-MAIL ADDRESS FOR A SINGLE USER
+  def Ldap_Record.get_email(uniqname = nil)
+    ldap = ldap_connection
+    search_param = uniqname # the AD account goes here
+    result_attrs = ["mail"] # Whatever you want to bring back in your result set goes here
+    # Build filter
+    search_filter = Net::LDAP::Filter.eq("uid", search_param)
+    # Execute search
+    ldap.search(filter: search_filter, attributes: result_attrs) { |item|
+      return item.mail.first
     }
     get_ldap_response(ldap)
   end
 
   # ---------------------------------------------------------------------------------------------------------------------
   # Check if the UID is a member of an LDAP group. This function returns TRUE
-  # if uid passed in is a member of group_name passed in. Otherwise it will 
+  # if uid passed in is a member of group_name passed in. Otherwise it will
   # return false.
   def Ldap_Record.is_member_of_group?(uid = nil, group_name = nil)
     ldap = ldap_connection
@@ -64,22 +91,22 @@ module Ldap_Record
     group_filter = Net::LDAP::Filter.eq("objectClass", "group")
     composite_filter = Net::LDAP::Filter.join(search_filter, group_filter)
     # Execute search, extracting the AD account name from each member of the distribution list
-    ldap.search(filter: composite_filter, attributes: result_attrs) do |item| 
-      item.member.each do |entry| 
+    ldap.search(filter: composite_filter, attributes: result_attrs) do |item|
+      item.member.each do |entry|
         if entry.split(",").first.split("=")[1] == uid
-          return true 
+          return true
         end
       end
     end
     return FALSE
     get_ldap_response(ldap)
-  end 
+  end
 
   # ---------------------------------------------------------------------------------------------------------------------
   # Get the Name email and members of an LDAP group as a hash
   def Ldap_Record.get_email_distribution_list(group_name = nil)
     ldap = ldap_connection
-    result_hash = {} 
+    result_hash = {}
     member_hash = {}
     # GET THE MEMBERS OF AN E-MAIL DISTRIBUTION LIST
     search_param = group_name # the name of the distribution list you're looking for goes here
@@ -89,12 +116,12 @@ module Ldap_Record
     group_filter = Net::LDAP::Filter.eq("objectClass", "group")
     composite_filter = Net::LDAP::Filter.join(search_filter, group_filter)
     # Execute search, extracting the AD account name from each member of the distribution list
-    ldap.search(filter: composite_filter, attributes: result_attrs) do |item| 
+    ldap.search(filter: composite_filter, attributes: result_attrs) do |item|
       result_hash["group_name"] = item.cn.first
       result_hash["group_email"] = item.umichGroupEmail.first
       result_hash["members"] = item.member
     end
     return result_hash
     get_ldap_response(ldap)
-  end 
+  end
 end
