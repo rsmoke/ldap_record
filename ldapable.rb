@@ -1,4 +1,4 @@
-module Ldapable
+module Ldap_record
   # this was developed using guidence from this gist:
   # https://gist.githubusercontent.com/jeffjohnson9046/7012167/raw/86587b9637ddc2ece7a42df774980fa9c0aac9b3/ruby-ldap-sample.rb
 
@@ -36,7 +36,7 @@ module Ldapable
   end
 
   # GET THE DISPLAY NAME AND E-MAIL ADDRESS FOR A SINGLE USER
-  def Ldapable.get_simple_name(uniqname = nil)
+  def Ldap_record.get_simple_name(uniqname = nil)
     ldap = ldap_connection
     search_param = uniqname # the AD account goes here
     result_attrs = ["uid", "displayName", "mail", "umichPostalAddressData"] # Whatever you want to bring back in your result set goes here
@@ -54,7 +54,7 @@ module Ldapable
   # Check if the UID is a member of an LDAP group. This function returns TRUE
   # if uid passed in is a member of group_name passed in. Otherwise it will 
   # return false.
-  def Ldapable.is_member_of_group?(uid = nil, group_name = nil)
+  def Ldap_record.is_member_of_group?(uid = nil, group_name = nil)
     ldap = ldap_connection
     # GET THE MEMBERS OF AN E-MAIL DISTRIBUTION LIST
     search_param = group_name # the name of the distribution list you're looking for goes here
@@ -77,7 +77,7 @@ module Ldapable
 
   # ---------------------------------------------------------------------------------------------------------------------
   # Get the Name email and members of an LDAP group as a hash
-  def Ldapable.get_email_distribution_list(group_name = nil)
+  def Ldap_record.get_email_distribution_list(group_name = nil)
     ldap = ldap_connection
     result_hash = {} 
     member_hash = {}
