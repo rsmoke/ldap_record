@@ -24,7 +24,14 @@ include Ldap_Record
 ```
 Ldap_Record.get_simple_name(uniqname = nil)
 ```
-
+*get_dept: returns the Department_name
+```
+Ldap_Record.get_dept(uniqname = nil)
+```
+*get_email: returns the users email address
+```
+Ldap_Record.get_email(uniqname = nil)
+```
 *is_member_of_group?: returns true/false if uniqname is a member of the specified group
 ```
 Ldap_Record.is_member_of_group?(uid = nil, group_name = nil)
@@ -33,14 +40,4 @@ Ldap_Record.is_member_of_group?(uid = nil, group_name = nil)
 *get_email_distribution_list: Returns the list of emails that are associated to a group.
 ```
 Ldap_Record.get_email_distribution_list(group_name = nil)
-```
-
-*get_dept: returns the Department_name
-```
-Ldap_Record.get_dept(uniqname = nil)
-```
-
-*get_email: returns the users email address
-```
-Ldap_Record.get_email(uniqname = nil)
 ```
