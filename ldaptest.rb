@@ -3,7 +3,7 @@
 require_relative 'ldap_record'
 class Ldaptest
 
-  include Ldapable
+  include Ldap_Record
 
   def initialize(name=nil)
     @uid = name
