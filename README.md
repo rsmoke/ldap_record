@@ -20,11 +20,11 @@ include Ldap_Record
 ```
 
 ## Methods available
-*get_simple_name: returns the UID, Display Name, email, Department_name
+*get_simple_name: returns the Display Name
 ```
 Ldap_Record.get_simple_name(uniqname = nil)
 ```
-*get_dept: returns the Department_name
+*get_dept: returns the users Department_name
 ```
 Ldap_Record.get_dept(uniqname = nil)
 ```
@@ -36,7 +36,6 @@ Ldap_Record.get_email(uniqname = nil)
 ```
 Ldap_Record.is_member_of_group?(uid = nil, group_name = nil)
 ```
-
 *get_email_distribution_list: Returns the list of emails that are associated to a group.
 ```
 Ldap_Record.get_email_distribution_list(group_name = nil)
