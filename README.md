@@ -9,23 +9,38 @@ Requirements:
 * Time to try it out
 
 
-## For use in a Rails project install the gem net-ldap. To install the net-ldap gem
+## For use in a Rails project:
+*Install the gem net-ldap. To install the net-ldap gem
 ```
 gem 'net-ldap', '~> 0.15.0'
+```
+*Include the module in your class
+```
+include Ldap_Record
 ```
 
 ## Methods available
 *get_simple_name: returns the UID, Display Name, email, Department_name
 ```
-Ldapable.get_simple_name(uniqname = nil)
+Ldap_Record.get_simple_name(uniqname = nil)
 ```
 
-*s_member_of_group?: returns true/false if uniqname is a member of the specified group
+*is_member_of_group?: returns true/false if uniqname is a member of the specified group
 ```
-Ldapable.is_member_of_group?(uid = nil, group_name = nil)
+Ldap_Record.is_member_of_group?(uid = nil, group_name = nil)
 ```
 
 *get_email_distribution_list: Returns the list of emails that are associated to a group.
 ```
-Ldapable.get_email_distribution_list(group_name = nil)
+Ldap_Record.get_email_distribution_list(group_name = nil)
+```
+
+*get_dept: returns the Department_name
+```
+Ldap_Record.get_dept(uniqname = nil)
+```
+
+*get_email: returns the users email address
+```
+Ldap_Record.get_email(uniqname = nil)
 ```
