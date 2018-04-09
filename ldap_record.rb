@@ -35,7 +35,7 @@ module Ldap_Record
       }
   end
 
-  # GET THE DISPLAY NAME AND E-MAIL ADDRESS FOR A SINGLE USER
+  # GET THE DISPLAY NAME FOR A SINGLE USER
   def Ldap_Record.get_simple_name(uniqname = nil)
     ldap = ldap_connection
     search_param = uniqname # the AD account goes here
@@ -49,7 +49,7 @@ module Ldap_Record
     get_ldap_response(ldap)
   end
 
-  # GET THE DISPLAY NAME AND E-MAIL ADDRESS FOR A SINGLE USER
+  # GET THE PRIMARY DEPARTMENT FOR A SINGLE USER
   def Ldap_Record.get_dept(uniqname = nil)
     ldap = ldap_connection
     search_param = uniqname # the AD account goes here
@@ -63,7 +63,7 @@ module Ldap_Record
     get_ldap_response(ldap)
   end
 
-  # GET THE DISPLAY NAME AND E-MAIL ADDRESS FOR A SINGLE USER
+  # GET THE E-MAIL ADDRESS FOR A SINGLE USER
   def Ldap_Record.get_email(uniqname = nil)
     ldap = ldap_connection
     search_param = uniqname # the AD account goes here

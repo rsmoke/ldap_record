@@ -1,5 +1,5 @@
 # Description
-This module is to be used for checking user attributes in the MCommunity service provide at the University of Michigan
+This module is to be used for anonymous checking user attributes in the MCommunity service provide at the University of Michigan
 
 ## Try it out
 To try the module out you may clone the repo and run the ldaptest.rb script
