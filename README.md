@@ -10,6 +10,8 @@ Requirements:
 * Ruby at least 2.0.0
 * Gem 'net-ldap' ~> '0.16.1'
 > Install by running the following command at your command prompt_for_action
+>
+> *The Net::LDAP (aka net-ldap) gem before 0.16.0 for Ruby has a Missing SSL Certificate Validation.*
 ```bash
 gem install net-ldap
 ```
@@ -20,7 +22,7 @@ gem install net-ldap
 ## For use in a Rails project:
 Install the gem net-ldap by adding the follwing line to your GEMFILE
 
-> *The Net::LDAP (aka net-ldap) gem before 0.16.0 for Ruby has Missing SSL Certificate Validation.*
+> *The Net::LDAP (aka net-ldap) gem before 0.16.0 for Ruby has a Missing SSL Certificate Validation.*
 
 ```
 gem 'net-ldap', '~> 0.16.1'
