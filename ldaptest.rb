@@ -48,6 +48,7 @@ class Ldaptest
     puts "3: get users full name"
     puts "4: get users department"
     puts "5: get users email"
+    puts "55: get users groups"
     puts "+++++++++++++++++++++++++"
     puts "6: get ldap group-name member listing"
     puts "7: check if uid is member of a group"
@@ -62,6 +63,7 @@ class Ldaptest
     when 3 then result_box(Ldap_Record.get_simple_name(@uid))
     when 4 then result_box(Ldap_Record.get_dept(@uid))
     when 5 then result_box(Ldap_Record.get_email(@uid))
+    when 55 then result_box(Ldap_Record.all_groups_for_user(@uid))
     when 6 then result_box(Ldap_Record.get_email_distribution_list(@group_uid))
     when 7 then result_box(Ldap_Record.is_member_of_group?(@uid,@group_uid))
     when 8 then result_box(timestamp)
@@ -69,7 +71,7 @@ class Ldaptest
       throw(:done)
     else
       print "\e[2J\e[f"
-      puts "====> Please type 0,1,2,3,4,5,6,7,8 or 9 only"
+      puts "====> Please type 0,1,2,3,4,5,55,6,7,8 or 9 only"
       2.times { puts " " }
     end
   end

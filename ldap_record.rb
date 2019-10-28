@@ -124,4 +124,20 @@ module Ldap_Record
     return result_hash
     get_ldap_response(ldap)
   end
+
+  # ---------------------------------------------------------------------------
+  #  Get the groups a user is a member of
+  def Ldap_Record.all_groups_for_user(uid = nil)
+    ldap = ldap_connection
+    result_array = []
+    result_attrs = ["dn"]
+    # GET THE MEMBERS OF AN E-MAIL DISTRIBUTION LIST
+    # Execute search, extracting the AD account name from each member of the distribution list
+    # Build filter
+    ldap.search(filter: "member=uid=#{uid},ou=People,dc=umich,dc=edu", attributes: result_attrs) do |item|
+      item.each {|key,value| result_array << value.first.split("=")[1].split(",")[0]}
+    end
+    return result_array
+    get_ldap_response(ldap)
+  end
 end
