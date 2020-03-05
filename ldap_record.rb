@@ -119,7 +119,11 @@ module Ldap_Record
     ldap.search(filter: composite_filter, attributes: result_attrs) do |item|
       result_hash["group_name"] = item.cn.first
       result_hash["group_email"] = item.umichGroupEmail.first
-      result_hash["members"] = item.member
+      individual_array = []
+      item.member.each do |individual|
+        individual_array.push(individual.split(",").first.split("=")[1])
+      end
+      result_hash["members"] = individual_array.sort
     end
     return result_hash
     get_ldap_response(ldap)
@@ -134,7 +138,7 @@ module Ldap_Record
     ldap.search(filter: "member=uid=#{uid},ou=People,dc=umich,dc=edu", attributes: result_attrs) do |item|
       item.each {|key,value| result_array << value.first.split("=")[1].split(",")[0]}
     end
-    return result_array
+    return result_array.sort
     get_ldap_response(ldap)
   end
 end
